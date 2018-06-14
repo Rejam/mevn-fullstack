@@ -2,26 +2,26 @@
   <v-form v-model="valid" ref="form" lazy-validation>
     <v-text-field
       label="Movie Name"
-      v-model="name"
+      v-model="movie.name"
       :rules="nameRules"
       required
     ></v-text-field>
     <v-text-field
       name="input-7-1"
       label="Movie Description"
-      v-model="description"
+      v-model="movie.desc"
       multi-line
     ></v-text-field>
     <v-select
       label="Movie Release Year"
-      v-model="release_year"
+      v-model="movie.release_year"
       required
       :rules="releaseRules"
       :items="years"
     ></v-select>
     <v-text-field
       label="Movie Genre"
-      v-model="genre"
+      v-model="movie.genre"
       required
       :rules="genreRules"
     ></v-text-field>
@@ -36,13 +36,17 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data: () => ({
     valid: true,
-    name: '',
-    description: '',
-    genre: '',
-    release_year: '',
+    movie: {
+      name: '',
+      desc: '',
+      genre: '',
+      release_year: '',
+    },
     nameRules: [
       v => !!v || 'Movie name is required',
     ],
@@ -64,8 +68,19 @@ export default {
   methods: {
     submit() {
       if (this.$refs.form.validate()) {
-        // Perform next action
+        return axios({
+          method: 'post',
+          data: this.movie,
+          url: 'http://localhost:8081/movies',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }).then(() => {
+          this.$router.push({ name: 'Home' });
+          this.$refs.form.reset();
+        }).catch(() => {});
       }
+      return true;
     },
     clear() {
       this.$refs.form.reset();
