@@ -4,12 +4,21 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const morgan = require('morgan')
 const fs = require('fs')
+// Auth
+const jwt = require('jsonwebtoken');
+const passport = require('passport');
+const passportJWT = require('passport-jwt');
+const JwtStrategy = passportJWT.Strategy;
+const JwtOptions = {};
+JwtOptions.jwtFromRequest = passportJWT.ExtractJwt.fromAuthHeaderWithScheme('jwt');
+JwtOptions.secretOrKey = 'movieratingappSecretKet';
 
 const app = express()
 //const router = express.Router()
 app.use(cors())
 app.use(morgan('dev'))
 app.use(bodyParser.json())
+app.use(passport.initialize());
 
 mongoose.connect('mongodb://rejam:movies123@ds159020.mlab.com:59020/movies', 
 () => {
