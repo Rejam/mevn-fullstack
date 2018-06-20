@@ -24,6 +24,7 @@
       name='input-7-1'
       label='Confirm Password'
       v-model='confirm_password'
+      :rules='[confirmPasswordRules]'
     ></v-text-field>
 
     <v-btn
@@ -40,26 +41,30 @@
 import axios from 'axios';
 
 export default {
-  data: () => ({
-    valid: true,
-    user: {
-      name: '',
-      email: '',
-      password: '',
-    },
-    confirm_password: '',
-    emailRules: [
-      v => !!v || 'Email is required',
-      v => /\S+@\S+\.\S+/.test(v) || 'Email must be valid',
-    ],
-  }),
+  data() {
+    return {
+      valid: true,
+      user: {
+        name: '',
+        email: '',
+        password: '',
+      },
+      confirm_password: '',
+      emailRules: [
+        v => !!v || 'Email is required',
+        v => /\S+@\S+\.\S+/.test(v) || 'Email must be valid',
+      ],
+      confirmPasswordRules: v =>
+        v === this.user.password || 'Please confirm password',
+    };
+  },
   methods: {
     async submit() {
       if (this.$refs.form.validate()) {
         return axios({
           method: 'post',
           data: {
-            user: this.user
+            user: this.user,
           },
           url: 'http://localhost:8081/users/register',
           headers: {
@@ -75,7 +80,7 @@ export default {
         }).catch((err) => {
           const message = err.response.data.message;
           this.$swal('Oh oo!', `${message}`, 'error');
-        })
+        });
       }
       return true;
     },

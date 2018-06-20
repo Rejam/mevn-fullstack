@@ -1,4 +1,9 @@
 const User = require('../models/User');
+const jwt = require('jsonwebtoken');
+const ExtractJwt = require('passport-jwt').ExtractJwt;
+const jwtOptions = {};
+jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('jwt');
+jwtOptions.secretOrKey = 'secretMovieKey';
 
 module.exports.controller = (app) => {
   // register new user
@@ -12,5 +17,27 @@ module.exports.controller = (app) => {
       }
       res.send({ user });
     })
-  })
+  });
+
+  // login a user
+  app.post('/users/login', (req, res) => {
+    if (req.body.email && req.body.password) {
+      User.getUserByEmail(req.body.email, (err, user) => {
+        if (!user) {
+          res.status(404).json({message: 'The user does not exist!'});
+        } else {
+          User.comparePassword(req.body.password, user.password, (err, isMatch) => {
+            if (err) throw error;
+            if (isMatch) {
+              const payload = {id: user.id};
+              const token = jwt.sign(payload, jwtOptions.secretOrKey);
+              res.json({ message: 'ok', token});
+            } else {
+              res.status(401).json({ message: 'The password is incorrect!'});
+            }
+          })
+        }
+      });
+    }
+  });
 }
