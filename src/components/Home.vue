@@ -35,11 +35,17 @@ export default {
   },
   methods: {
     async fetchMovies() {
+      const token = window.localStorage.getItem('auth');
       return axios({
         method: 'get',
         url: 'http://localhost:8081/movies',
+        headers: {
+          Authorization: `JWT ${token}`,
+          'Content-Type': 'application/json',
+        },
       }).then((res) => {
         this.movies = res.data.movies;
+        this.current_user = res.data.current_user;
       }).catch(() => {});
     },
   },

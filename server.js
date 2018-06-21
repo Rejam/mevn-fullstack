@@ -8,9 +8,10 @@ const fs = require('fs')
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const passportJWT = require('passport-jwt');
+const ExtractJwt = passportJWT.ExtractJwt;
 const JwtStrategy = passportJWT.Strategy;
 const JwtOptions = {};
-JwtOptions.jwtFromRequest = passportJWT.ExtractJwt.fromAuthHeaderWithScheme('jwt');
+JwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('jwt');
 JwtOptions.secretOrKey = 'movieratingappSecretKet';
 
 const app = express()
@@ -36,12 +37,6 @@ fs.readdirSync("controllers").forEach(function (file) {
   route.controller(app)
   }
 })
-
-// router.get('/', function(req, res) {
-//   res.json({ message: 'API Initialized!'});
-// })
-
-// app.use(router);
 
 const port = process.env.API_PORT || 8081;
 app.listen(port, () => {

@@ -1,6 +1,7 @@
 const User = require('../models/User');
+const passportJWT = require('passport-jwt');
 const jwt = require('jsonwebtoken');
-const ExtractJwt = require('passport-jwt').ExtractJwt;
+const ExtractJwt = passportJWT.ExtractJwt;
 const jwtOptions = {};
 jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('jwt');
 jwtOptions.secretOrKey = 'secretMovieKey';
