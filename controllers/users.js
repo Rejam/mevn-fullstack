@@ -1,10 +1,4 @@
 const User = require('../models/User');
-const passportJWT = require('passport-jwt');
-const jwt = require('jsonwebtoken');
-const ExtractJwt = passportJWT.ExtractJwt;
-const jwtOptions = {};
-jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('jwt');
-jwtOptions.secretOrKey = 'secretMovieKey';
 
 module.exports.controller = (app) => {
   // register new user
@@ -30,9 +24,7 @@ module.exports.controller = (app) => {
           User.comparePassword(req.body.password, user.password, (err, isMatch) => {
             if (err) throw error;
             if (isMatch) {
-              const payload = {id: user.id};
-              const token = jwt.sign(payload, jwtOptions.secretOrKey);
-              res.json({ message: 'ok', token});
+              res.json({ message: 'ok'});
             } else {
               res.status(401).json({ message: 'The password is incorrect!'});
             }

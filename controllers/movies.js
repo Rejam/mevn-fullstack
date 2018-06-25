@@ -5,7 +5,6 @@ const Rating = require('../models/Movie');
 module.exports.controller = app => {
   // fetch all movies
   app.get('/movies', 
-  passport.authenticate('jwt', { session: false }),
   (req, res) => {
     Movie.find({}, 
       'name desc release_year genre', 

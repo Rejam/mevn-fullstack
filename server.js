@@ -4,15 +4,9 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const morgan = require('morgan')
 const fs = require('fs')
+
 // Auth
-const jwt = require('jsonwebtoken');
 const passport = require('passport');
-const passportJWT = require('passport-jwt');
-const ExtractJwt = passportJWT.ExtractJwt;
-const JwtStrategy = passportJWT.Strategy;
-const JwtOptions = {};
-JwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('jwt');
-JwtOptions.secretOrKey = 'movieratingappSecretKet';
 
 const app = express()
 //const router = express.Router()
