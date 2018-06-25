@@ -1,6 +1,43 @@
 const User = require('../models/User');
+const passport  = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 
 module.exports.controller = (app) => {
+  // local strategy
+  passport.use(new LocalStrategy({
+    usernameField: 'email',
+    passwordField: 'password',
+  }, (email, password, done) => {
+    User.getUserByEmail(email, (err, user) => {
+      if (err) { return done(err); }
+      if (!user) { return done(null, false); }
+      User.comparePassword(password, user.password, (err, isMatch) => {
+        if (isMatch) {
+          return done(null, user);
+        }
+        return done(null, false);
+      });
+      return true;
+    })
+  }))
+
+  // user login
+  app.post('/users/login', 
+    passport.authenticate('local', { failureRedirect: '/users/login' }),
+    (req, res) => {
+      res.redirect('/');  
+  });
+
+  passport.serializeUser((user, done) => {
+    done(null, user.id)
+  })
+
+  passport.deserializeUser((id, done) => {
+    User.findById(id, (err, user) => {
+      done(err, user);
+    })
+  })
+  
   // register new user
   app.post('/users/register', (req, res) => {
     const newUser = new User(req.body.user);
@@ -14,23 +51,4 @@ module.exports.controller = (app) => {
     })
   });
 
-  // login a user
-  app.post('/users/login', (req, res) => {
-    if (req.body.email && req.body.password) {
-      User.getUserByEmail(req.body.email, (err, user) => {
-        if (!user) {
-          res.status(404).json({message: 'The user does not exist!'});
-        } else {
-          User.comparePassword(req.body.password, user.password, (err, isMatch) => {
-            if (err) throw error;
-            if (isMatch) {
-              res.json({ message: 'ok'});
-            } else {
-              res.status(401).json({ message: 'The password is incorrect!'});
-            }
-          })
-        }
-      });
-    }
-  });
 }

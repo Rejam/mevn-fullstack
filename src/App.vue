@@ -32,10 +32,38 @@
     <v-toolbar color="indigo" dark fixed app>
       <v-toolbar-side-icon @click.stop="drawer = !drawer">
       </v-toolbar-side-icon>
-      <v-toolbar-title>Home</v-toolbar-title>
+      <v-toolbar-title>Movie App</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items class="hidden-sm-and-down">
-        <v-btn flat v-bind:to="{ name: 'AddMovie' }">Add Movie</v-btn>
+        <v-btn
+          flat
+          id='add_movie_link'
+          v-bind:to="{ name: 'AddMovie' }"
+          v-if='current_user'
+        >Add Movie</v-btn>
+        <v-btn
+          flat
+          id='user_email'
+          v-if='current_user'
+        >{{current_user.email}}</v-btn>
+        <v-btn
+          flat
+          id='register_btn'
+          v-bind:to='{ name: "Register" }'
+          v-if='!current_user'
+        >Register</v-btn>
+        <v-btn
+          flat
+          id='login_btn'
+          v-bind:to='{ name: "Login" }'
+          v-if='!current_user'
+        >Login</v-btn>
+        <v-btn
+          flat
+          id='logout_btn'
+          v-if='current_user'
+          @click='logout'
+        >Logout</v-btn>
       </v-toolbar-items>
     </v-toolbar>
 
@@ -55,31 +83,44 @@
 </template>
 
 <script>
+import axios from 'axios';
+import bus from './bus';
+
 export default {
   data: () => ({
     drawer: null,
+    current_user: null,
   }),
   props: {
     source: String,
   },
+  mounted() {
+    this.fetchUser();
+    this.listenToEvents();
+  },
+  methods: {
+    listenToEvents() {
+      bus.$on('refreshUser', () => {
+        this.fetchUser();
+      });
+    },
+    async fetchUser() {
+      return axios({
+        method: 'get',
+        url: '/api/current_user',
+      }).then((res) => {
+        this.current_user = res.data.current_user;
+      }).catch(() => {});
+    },
+    logout() {
+      return axios({
+        method: 'get',
+        url: '/api/logout',
+      }).then(() => {
+        bus.$emit('refreshUser');
+        this.$router.push({ name: 'Home' });
+      }).catch(() => {});
+    },
+  },
 };
 </script>
-
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-#inspire {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-}
-.container.fill-height {
-  align-items: normal;
-}
-a.side_bar_link {
-  text-decoration: none;
-}
-</style>

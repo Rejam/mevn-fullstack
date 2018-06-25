@@ -26,6 +26,7 @@
 
 <script>
 import axios from 'axios';
+import bus from './../bus';
 
 export default {
   name: 'Login',
@@ -48,13 +49,13 @@ export default {
           email: this.email,
           password: this.password,
         },
-        url: 'http://localhost:8081/users/login',
+        url: '/users/login',
         headers: {
           'Content-Type': 'application/json',
         },
-      }).then((res) => {
-        window.localStorage.setItem('auth', res.data.token);
+      }).then(() => {
         this.$swal('Great!', 'You are logged in!', 'success');
+        bus.$emit('refreshUser');
         this.$router.push({ name: 'Home' });
       }).catch((err) => {
         const message = err.response.data.message;

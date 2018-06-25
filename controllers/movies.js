@@ -1,4 +1,3 @@
-const passport = require('passport');
 const Movie = require('../models/Movie');
 const Rating = require('../models/Movie');
 
@@ -15,7 +14,7 @@ module.exports.controller = app => {
   })
 
   // fetch a single movie
-  app.get('/api/movies/:id', (req, res) => {
+  app.get('/movies/:id', (req, res) => {
     Movie.findById(req.params.id, 
     'name desc release_year genre',
     (err, movie) => {

@@ -66,7 +66,7 @@ export default {
           data: {
             user: this.user,
           },
-          url: 'http://localhost:8081/users/register',
+          url: '/users/register',
           headers: {
             'Content-Type': 'application/json',
           },

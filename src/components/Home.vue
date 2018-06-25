@@ -1,5 +1,6 @@
 <template>
   <v-layout row wrap>
+    {{ current_user }}
     <v-flex xs4 v-for='movie in movies' :key='movie._id'>
       <v-card>
         <v-card-title primary-title>
@@ -38,7 +39,7 @@ export default {
       const token = window.localStorage.getItem('auth');
       return axios({
         method: 'get',
-        url: 'http://localhost:8081/movies',
+        url: '/movies',
         headers: {
           Authorization: `JWT ${token}`,
           'Content-Type': 'application/json',
